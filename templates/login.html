@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Giriş Yap - VALEXDP</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #43cea2, #185a9d);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: #fff;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+            width: 350px;
+            text-align: center;
+        }
+        h1 {
+            margin-bottom: 24px;
+            font-weight: 700;
+            letter-spacing: 1.2px;
+        }
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 12px 15px;
+            margin: 10px 0 20px 0;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            outline: none;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: #48bb78;
+            color: white;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        button:hover {
+            background: #2f855a;
+        }
+        .message {
+            margin-top: 15px;
+            font-size: 14px;
+        }
+        .message a {
+            color: #cbd5e0;
+            text-decoration: underline;
+        }
+        .flash {
+            background-color: #ff6b6b;
+            color: white;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>VALEXDP Giriş</h1>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, msg in messages %}
+              <div class="flash">{{ msg|safe }}</div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <form method="POST" action="{{ url_for('login') }}">
+            <input type="text" name="username" placeholder="Kullanıcı Adı" required autofocus />
+            <input type="password" name="password" placeholder="Şifre" required />
+            <button type="submit">Giriş Yap</button>
+        </form>
+        <div class="message">
+            Hesabın yok mu? <a href="{{ url_for('register') }}">Kayıt Ol</a>
+        </div>
+    </div>
+</body>
+</html>

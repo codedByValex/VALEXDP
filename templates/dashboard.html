@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8" />
+    <title>VALEXDP - Kullanıcı Paneli</title>
+    <style>
+        /* Genel stiller (senin stilin) */
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow-x: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #2c1361;
+            color: #fff;
+            position: relative;
+        }
+        #background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            background: #2c1361;
+        }
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 480px;
+            margin: 60px auto;
+            background: rgba(44, 19, 97, 0.85);
+            padding: 35px 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            text-align: center;
+        }
+        h1 {
+            font-size: 3.2rem;
+            margin-bottom: 10px;
+            color: #e0e0ff;
+        }
+        p {
+            font-size: 1.2rem;
+            margin-bottom: 25px;
+            color: #c9c9ff;
+        }
+        input[type="file"] {
+            width: 100%;
+            padding: 13px 15px;
+            border-radius: 12px;
+            border: none;
+            background-color: rgba(255,255,255,0.15);
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        input[type="file"]:hover {
+            background-color: rgba(255,255,255,0.25);
+        }
+        button {
+            margin-top: 20px;
+            width: 100%;
+            padding: 15px 0;
+            border: none;
+            border-radius: 14px;
+            background: #6e48aa;
+            color: white;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        button:hover {
+            background: #523d7a;
+        }
+        .file-list {
+            margin-top: 30px;
+            text-align: left;
+            max-height: 250px;
+            overflow-y: auto;
+            padding-left: 0;
+        }
+        .file-list li {
+            list-style: none;
+            background: rgba(255, 255, 255, 0.1);
+            margin-bottom: 10px;
+            padding: 10px 15px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1rem;
+            word-break: break-all;
+        }
+        .file-list li a {
+            color: #d8bfff;
+            text-decoration: none;
+        }
+        .file-list li a:hover {
+            text-decoration: underline;
+        }
+        .upload-time {
+            font-size: 0.85rem;
+            color: #b8a1d9;
+        }
+        .flash {
+            margin-top: 25px;
+            padding: 14px 18px;
+            background-color: #48bb78;
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            font-size: 1rem;
+            word-wrap: break-word;
+        }
+        .flash a {
+            color: #d9f99d;
+            font-weight: 700;
+            text-decoration: underline;
+        }
+        .logout-btn {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 12px 25px;
+            background: #a16eff;
+            border-radius: 18px;
+            color: white;
+            font-weight: 700;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+        .logout-btn:hover {
+            background-color: #7b44d1;
+        }
+        .file-list::-webkit-scrollbar {
+            width: 8px;
+        }
+        .file-list::-webkit-scrollbar-thumb {
+            background-color: rgba(110, 72, 170, 0.8);
+            border-radius: 10px;
+        }
+        .file-list::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        @media (max-width: 500px) {
+            .container {
+                margin: 40px 15px;
+                padding: 25px 20px;
+            }
+            h1 {
+                font-size: 2.4rem;
+            }
+            button, input[type="file"] {
+                font-size: 1rem;
+                padding: 12px 10px;
+            }
+            .file-list li {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="background"></canvas>
+
+    <div class="container">
+        <h1>🚀 VALEXDP</h1>
+        <p>Merhaba <b>{{ username }}</b>, dosyalarını güvenle yükleyebilirsin.</p>
+
+        <form method="POST" action="/upload" enctype="multipart/form-data">
+            <input type="file" name="file" required />
+            <button type="submit">Dosya Yükle</button>
+        </form>
+
+        {% if files %}
+        <h3 style="margin-top: 35px;">📂 Yüklediğin Dosyalar:</h3>
+        <ul class="file-list">
+            {% for f in files %}
+            <li>
+                <a href="{{ url_for('uploaded_file', filename=f['filename']) }}" target="_blank">{{ f['filename'] }}</a>
+                <span class="upload-time">{{ f['upload_time'] }}</span>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p style="margin-top: 25px; color: #aaa;">Henüz dosya yüklenmedi.</p>
+        {% endif %}
+
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            <div class="flash">
+              {% for msg in messages %}
+                <p>{{ msg|safe }}</p>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+
+        <a href="{{ url_for('logout') }}" class="logout-btn">Çıkış Yap</a>
+    </div>
+
+    <script>
+    const canvas = document.getElementById('background');
+    const ctx = canvas.getContext('2d');
+    let width, height;
+    let points = [];
+
+    function init() {
+        width = window.innerWidth;
+        height = window.innerHeight;
+        canvas.width = width;
+        canvas.height = height;
+        points = [];
+
+        for (let i = 0; i < 80; i++) {
+            points.push({
+                x: Math.random() * width,
+                y: Math.random() * height,
+                radius: 2 + Math.random() * 2,
+                angle: Math.random() * Math.PI * 2,
+                speed: 0.01 + Math.random() * 0.02,
+                orbitRadius: 10 + Math.random() * 20,
+                centerX: Math.random() * width,
+                centerY: Math.random() * height,
+            });
+        }
+    }
+
+    function animate() {
+        ctx.clearRect(0, 0, width, height);
+        for (let p of points) {
+            p.angle += p.speed;
+            const x = p.centerX + Math.cos(p.angle) * p.orbitRadius;
+            const y = p.centerY + Math.sin(p.angle) * p.orbitRadius;
+            ctx.beginPath();
+            ctx.arc(x, y, p.radius, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+            ctx.fill();
+        }
+        requestAnimationFrame(animate);
+    }
+
+    window.addEventListener('resize', init);
+    init();
+    animate();
+    </script>
+</body>
+</html>
